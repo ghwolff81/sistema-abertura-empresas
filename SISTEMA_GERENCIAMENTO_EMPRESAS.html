@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Abertura - Com Detalhes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f4c3a 0%, #1a6b52 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(15, 76, 58, 0.2);
+        }
+
+        .header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        .left-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .add-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .add-section input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+        }
+
+        .add-section input:focus {
+            outline: none;
+            border-color: #0f4c3a;
+        }
+
+        .add-section button {
+            width: 100%;
+            padding: 10px;
+            background: #0f4c3a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .add-section button:hover {
+            background: #0d3d2e;
+        }
+
+        .clientes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .cliente-item {
+            padding: 12px;
+            background: #f8fafb;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .cliente-item:hover {
+            border-color: #0f4c3a;
+            background: #f0f8f6;
+        }
+
+        .cliente-item.active {
+            background: #0f4c3a;
+            color: white;
+            border-color: #0f4c3a;
+        }
+
+        .cliente-nome {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cliente-progresso {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .right-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cliente-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .cliente-header h2 {
+            font-size: 24px;
+            color: #0f4c3a;
+        }
+
+        .cliente-info {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .cliente-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-small:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-delete {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #ff5252;
+        }
+
+        .blocos-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .bloco {
+            background: #f8fafb;
+            border-left: 4px solid #0f4c3a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .bloco.bloco-0 {
+            border-left-color: #ffd93d;
+        }
+
+        .bloco.bloco-1 {
+            border-left-color: #6bcf7f;
+        }
+
+        .bloco.bloco-2 {
+            border-left-color: #4d96ff;
+        }
+
+        .bloco.bloco-3 {
+            border-left-color: #9d84b7;
+        }
+
+        .bloco-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .bloco-checkbox {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            accent-color: #0f4c3a;
+        }
+
+        .bloco-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f4c3a;
+        }
+
+        .bloco-progress {
+            font-size: 12px;
+            color: #999;
+            margin-left: auto;
+        }
+
+        .sub-etapas {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .sub-etapa {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .sub-etapa input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .sub-etapa label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .sub-etapa-data {
+            font-size: 11px;
+            color: #6bcf7f;
+            margin-left: auto;
+        }
+
+        .bloco-status {
+            font-size: 12px;
+            color: #0f4c3a;
+            font-weight: 600;
+            background: #f0f8f6;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Sistema de Abertura de Empresas</h1>
+            <p>Sempre Certo Contabilidade - Gestão de Projetos</p>
+        </div>
+
+        <div class="content">
+            <div class="left-panel">
+                <div class="add-section">
+                    <input type="text" id="nomeCliente" placeholder="Nome da empresa">
+                    <input type="text" id="telefoneCliente" placeholder="Telefone (opcional)">
+                    <input type="text" id="emailCliente" placeholder="Email (opcional)">
+                    <button onclick="adicionarCliente()">➕ Adicionar Cliente</button>
+                </div>
+
+                <div class="clientes-list" id="clientesList">
+                    <!-- Clientes serão inseridos aqui -->
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div id="detalhes">
+                    <div class="empty-state">
+                        <p>👈 Selecione um cliente ou crie um novo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estrutura dos blocos
+        const BLOCOS = [
+            {
+                id: 0,
+                nome: '📋 BLOCO 0: Orçamento e Aprovação',
+                etapas: [
+                    'Pasta Drive criada no Google Drive',
+                    'Orçamento enviado',
+                    'Orçamento aprovado pelo cliente'
+                ]
+            },
+            {
+                id: 1,
+                nome: '📄 BLOCO 1: Documentação',
+                etapas: [
+                    'Cópia RG e CPF de todos os sócios',
+                    'Comprovante de endereço dos sócios',
+                    'Ato de constituição (se houver)',
+                    'Documento de identidade do representante',
+                    'Comprovante de endereço da empresa',
+                    'Lista de atividades econômicas',
+                    'Dados de contato completos',
+                    'Dados da empresa (razão social, nome fantasia)',
+                    'Declaração de enquadramento tributário',
+                    'Documentação de participação societária',
+                    'Endereço de e-mail corporativo',
+                    'Telefone comercial'
+                ]
+            },
+            {
+                id: 2,
+                nome: '🏢 BLOCO 2: Abertura',
+                etapas: [
+                    'Consulta Prévia JUCERGS (PR)',
+                    'Protocolo DBE enviado',
+                    'FCN (Formulário de Constituição) preenchido',
+                    'Contrato Social assinado digitalmente',
+                    'Taxa de junta comercial paga',
+                    'CNPJ recebido',
+                    'Inscrição Estadual recebida',
+                    'Inscrição Municipal recebida',
+                    'Alvará de Funcionamento',
+                    'Certificado de Bombeiros',
+                    'Licenças especiais (se houver)'
+                ]
+            },
+            {
+                id: 3,
+                nome: '💻 BLOCO 3: Sistema e Onboarding',
+                etapas: [
+                    'Cadastro na Receita Estadual',
+                    'Autorização NF-e solicitada',
+                    'Senha da Prefeitura criada',
+                    'Parametrização de sistema do cliente',
+                    'Cadastro no DJE (Domicílio Jurídico Eletrônico)',
+                    'Senha da Prefeitura criada',
+                    'Contrato de Prestação enviado',
+                    'Contrato assinado',
+                    'Cadastro no Domínio Contábil',
+                    'Período inicial configurado',
+                    'Primeira movimentação inserida',
+                    'Filiação à SEG Paraná (se obrigatório)',
+                    'Configuração de NF-e completa',
+                    'Pasta Drive criada e compartilhada',
+                    'Cliente recebeu instruções',
+                    'EMPRESA PRONTA PARA CONTABILIDADE MENSAL'
+                ]
+            }
+        ];
+
+        let clientes = [];
+
+        // Carregar dados com segurança
+        try {
+            const dados = localStorage.getItem('clientes');
+            if (dados) {
+                clientes = JSON.parse(dados);
+            }
+        } catch (e) {
+            console.log('Erro ao carregar dados, iniciando novo');
+            clientes = [];
+        }
+
+        let clienteAtivo = null;
+
+        function salvarDados() {
+            try {
+                localStorage.setItem('clientes', JSON.stringify(clientes));
+                renderizarClientes();
+                if (clienteAtivo) {
+                    renderizarDetalhes(clienteAtivo);
+                }
+            } catch (e) {
+                alert('Erro ao salvar: ' + e.message);
+            }
+        }
+
+        function adicionarCliente() {
+            const nome = document.getElementById('nomeCliente').value.trim();
+            const telefone = document.getElementById('telefoneCliente').value.trim();
+            const email = document.getElementById('emailCliente').value.trim();
+
+            if (!nome) {
+                alert('Digite o nome do cliente');
+                return;
+            }
+
+            const cliente = {
+                id: Date.now(),
+                nome: nome,
+                telefone: telefone,
+                email: email,
+                blocos: BLOCOS.map(bloco => ({
+                    id: bloco.id,
+                    etapas: bloco.etapas.map(etapa => ({
+                        texto: etapa,
+                        completo: false,
+                        data: null
+                    }))
+                })),
+                dataCriacao: new Date().toLocaleDateString('pt-BR')
+            };
+
+            clientes.push(cliente);
+            salvarDados();
+
+            document.getElementById('nomeCliente').value = '';
+            document.getElementById('telefoneCliente').value = '';
+            document.getElementById('emailCliente').value = '';
+
+            clienteAtivo = cliente.id;
+            renderizarDetalhes(cliente.id);
+        }
+
+        function selecionarCliente(clienteId) {
+            clienteAtivo = clienteId;
+            renderizarClientes();
+            renderizarDetalhes(clienteId);
+        }
+
+        function marcarEtapa(clienteId, blocoId, etapaIdx) {
+            const cliente = clientes.find(c => c.id === clienteId);
+            if (!cliente || !cliente.blocos) return;
+
+            const bloco = cliente.blocos.find(b => b.id === blocoId);
+            if (!bloco || !bloco.etapas) return;
+
+            const etapa = bloco.etapas[etapaIdx];
+            if (!etapa) return;
+
+            etapa.completo = !etapa.completo;
+            etapa.data = etapa.completo ? new Date().toLocaleDateString('pt-BR') : null;
+
+            salvarDados();
+        }
+
+        function deletarCliente(clienteId) {
+            if (confirm('Tem certeza que deseja deletar este cliente?')) {
+                clientes = clientes.filter(c => c.id !== clienteId);
+                if (clienteAtivo === clienteId) {
+                    clienteAtivo = null;
+                }
+                salvarDados();
+            }
+        }
+
+        function renderizarClientes() {
+            const lista = document.getElementById('clientesList');
+
+            if (!clientes || clientes.length === 0) {
+                lista.innerHTML = '<p style="text-align: center; color: #999; font-size: 13px; padding: 20px;">Nenhum cliente ainda</p>';
+                return;
+            }
+
+            lista.innerHTML = clientes.map(cliente => {
+                if (!cliente.blocos) return '';
+                
+                const totalEtapas = cliente.blocos.reduce((acc, b) => {
+                    return acc + (b.etapas ? b.etapas.length : 0);
+                }, 0);
+                
+                const etapasCompletas = cliente.blocos.reduce((acc, b) => {
+                    return acc + (b.etapas ? b.etapas.filter(e => e.completo).length : 0);
+                }, 0);
+                
+                const percentual = totalEtapas > 0 ? Math.round((etapasCompletas / totalEtapas) * 100) : 0;
+
+                return `
+                    <div class="cliente-item ${clienteAtivo === cliente.id ? 'active' : ''}" onclick="selecionarCliente(${cliente.id})">
+                        <div class="cliente-nome">${cliente.nome || 'Sem nome'}</div>
+                        <div class="cliente-progresso">${etapasCompletas}/${totalEtapas} etapas (${percentual}%)</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarDetalhes(clienteId) {
+            const cliente = clientes.find(c => c.id === clienteId);
+            const detalhes = document.getElementById('detalhes');
+
+            if (!cliente) {
+                detalhes.innerHTML = '<div class="empty-state"><p>Selecione um cliente</p></div>';
+                return;
+            }
+
+            if (!cliente.blocos) {
+                cliente.blocos = BLOCOS.map(bloco => ({
+                    id: bloco.id,
+                    etapas: bloco.etapas.map(etapa => ({
+                        texto: etapa,
+                        completo: false,
+                        data: null
+                    }))
+                }));
+            }
+
+            detalhes.innerHTML = `
+                <div class="cliente-header">
+                    <div>
+                        <h2>${cliente.nome || 'Sem nome'}</h2>
+                        <div class="cliente-info">
+                            ${cliente.telefone ? `📱 ${cliente.telefone}<br>` : ''}
+                            ${cliente.email ? `📧 ${cliente.email}<br>` : ''}
+                            📅 Criado em ${cliente.dataCriacao || 'Data desconhecida'}
+                        </div>
+                    </div>
+                    <div class="cliente-actions">
+                        <button class="btn-small btn-delete" onclick="deletarCliente(${cliente.id})">🗑️ Deletar</button>
+                    </div>
+                </div>
+
+                <div class="blocos-container">
+                    ${cliente.blocos.map((bloco, idx) => {
+                        const blocoInfo = BLOCOS.find(b => b.id === bloco.id);
+                        if (!bloco.etapas) return '';
+                        
+                        const etapasCompletas = bloco.etapas.filter(e => e.completo).length;
+                        const totalEtapas = bloco.etapas.length;
+
+                        return `
+                            <div class="bloco bloco-${bloco.id}">
+                                <div class="bloco-header">
+                                    <input type="checkbox" class="bloco-checkbox" 
+                                        ${etapasCompletas === totalEtapas ? 'checked' : ''} 
+                                        onchange="marcarBlocoInteiro(${cliente.id}, ${bloco.id})">
+                                    <div class="bloco-title">${blocoInfo.nome}</div>
+                                    <div class="bloco-progress">${etapasCompletas}/${totalEtapas}</div>
+                                </div>
+
+                                <div class="sub-etapas">
+                                    ${bloco.etapas.map((etapa, i) => `
+                                        <div class="sub-etapa">
+                                            <input type="checkbox" id="etapa_${bloco.id}_${i}" 
+                                                ${etapa.completo ? 'checked' : ''}
+                                                onchange="marcarEtapa(${cliente.id}, ${bloco.id}, ${i})">
+                                            <label for="etapa_${bloco.id}_${i}">${etapa.texto}</label>
+                                            ${etapa.data ? `<div class="sub-etapa-data">✓ ${etapa.data}</div>` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <div class="bloco-status">
+                                    ${etapasCompletas === totalEtapas ? '✅ Bloco Completo' : `${etapasCompletas} de ${totalEtapas} etapas`}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function marcarBlocoInteiro(clienteId, blocoId) {
+            const cliente = clientes.find(c => c.id === clienteId);
+            if (!cliente || !cliente.blocos) return;
+
+            const bloco = cliente.blocos.find(b => b.id === blocoId);
+            if (!bloco || !bloco.etapas) return;
+
+            const todasCompletas = bloco.etapas.every(e => e.completo);
+            const novoStatus = !todasCompletas;
+
+            bloco.etapas.forEach(etapa => {
+                etapa.completo = novoStatus;
+                etapa.data = novoStatus ? new Date().toLocaleDateString('pt-BR') : null;
+            });
+
+            salvarDados();
+        }
+
+        // Inicializar
+        renderizarClientes();
+        if (clientes && clientes.length > 0) {
+            clienteAtivo = clientes[0].id;
+            renderizarDetalhes(clienteAtivo);
+        } else {
+            document.getElementById('detalhes').innerHTML = '<div class="empty-state"><p>👈 Adicione um cliente para começar</p></div>';
+        }
+    </script>
+</body>
+</html>
