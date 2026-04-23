@@ -7,14 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;500;600&display=swap');
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1600px; margin: 0 auto; }
         .header { background: linear-gradient(135deg, #0f4c3a 0%, #1a6b52 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(15, 76, 58, 0.2); }
         .header h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; margin-bottom: 10px; }
@@ -64,7 +57,6 @@
             <p>Sempre Certo Contabilidade - Gestão de Projetos</p>
             <div class="status" id="statusMsg">🔄 Carregando...</div>
         </div>
-
         <div class="content">
             <div class="left-panel">
                 <div class="add-section">
@@ -75,7 +67,6 @@
                 </div>
                 <div class="clientes-list" id="clientesList"></div>
             </div>
-
             <div class="right-panel">
                 <div id="detalhes">
                     <div class="empty-state">
@@ -85,7 +76,6 @@
             </div>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <script>
@@ -99,35 +89,13 @@
             appId: "1:401821734545:web:2f3104c4d6558748655138",
             measurementId: "G-SDNQLg9C19"
         };
-
-        let app, db;
-        let clientes = [];
-        let clienteAtivo = null;
-        let firebaseConectado = false;
-
+        let app, db, clientes = [], clienteAtivo = null, firebaseConectado = false;
         const BLOCOS = [
-            {
-                id: 0,
-                nome: '📋 BLOCO 0: Orçamento e Aprovação',
-                etapas: ['Orçamento enviado', 'Orçamento aprovado pelo cliente']
-            },
-            {
-                id: 1,
-                nome: '📄 BLOCO 1: Documentação',
-                etapas: ['Criar pastas no servidor (grupo societário)', 'Cópia RG e CPF de todos os sócios', 'Comprovante de endereço dos sócios', 'Ato de constituição (se houver)', 'Documento de identidade do representante', 'Comprovante de endereço da empresa', 'Lista de atividades econômicas', 'Dados de contato completos', 'Dados da empresa (razão social, nome fantasia)', 'Declaração de enquadramento tributário', 'Documentação de participação societária', 'Endereço de e-mail corporativo', 'Telefone comercial']
-            },
-            {
-                id: 2,
-                nome: '🏢 BLOCO 2: Abertura',
-                etapas: ['Consulta Prévia', 'Protocolo DBE enviado', 'FCN (Formulário de Constituição) preenchido', 'Contrato Social assinado digitalmente', 'Taxa de junta comercial paga', 'Protocolo da abertura', 'CNPJ recebido', 'Inscrição Estadual recebida', 'Inscrição Municipal recebida', 'Alvará de Funcionamento', 'Certificado de Bombeiros', 'Licenças especiais (se houver)']
-            },
-            {
-                id: 3,
-                nome: '💻 BLOCO 3: Sistema e Onboarding',
-                etapas: ['Cadastro na Receita Estadual', 'Autorização NF-e solicitada', 'Senha da Prefeitura criada', 'Parametrização de sistema do cliente', 'Cadastro no DJE (Domicílio Jurídico Eletrônico)', 'Contrato de Prestação enviado', 'Contrato assinado', 'Cadastro no Domínio Contábil', 'Período inicial configurado', 'Primeira movimentação inserida', 'Filiação à SEG Paraná (se obrigatório)', 'Configuração de NF-e completa', 'Pasta Drive criada e compartilhada', 'Cliente recebeu instruções', 'EMPRESA PRONTA PARA CONTABILIDADE MENSAL']
-            }
+            { id: 0, nome: '📋 BLOCO 0: Orçamento e Aprovação', etapas: ['Orçamento enviado', 'Orçamento aprovado pelo cliente'] },
+            { id: 1, nome: '📄 BLOCO 1: Documentação', etapas: ['Criar pastas no servidor (grupo societário)', 'Cópia RG e CPF de todos os sócios', 'Comprovante de endereço dos sócios', 'Ato de constituição (se houver)', 'Documento de identidade do representante', 'Comprovante de endereço da empresa', 'Lista de atividades econômicas', 'Dados de contato completos', 'Dados da empresa (razão social, nome fantasia)', 'Declaração de enquadramento tributário', 'Documentação de participação societária', 'Endereço de e-mail corporativo', 'Telefone comercial'] },
+            { id: 2, nome: '🏢 BLOCO 2: Abertura', etapas: ['Consulta Prévia', 'Protocolo DBE enviado', 'FCN (Formulário de Constituição) preenchido', 'Contrato Social assinado digitalmente', 'Taxa de junta comercial paga', 'Protocolo da abertura', 'CNPJ recebido', 'Inscrição Estadual recebida', 'Inscrição Municipal recebida', 'Alvará de Funcionamento', 'Certificado de Bombeiros', 'Licenças especiais (se houver)'] },
+            { id: 3, nome: '💻 BLOCO 3: Sistema e Onboarding', etapas: ['Cadastro na Receita Estadual', 'Autorização NF-e solicitada', 'Senha da Prefeitura criada', 'Parametrização de sistema do cliente', 'Cadastro no DJE (Domicílio Jurídico Eletrônico)', 'Contrato de Prestação enviado', 'Contrato assinado', 'Cadastro no Domínio Contábil', 'Período inicial configurado', 'Primeira movimentação inserida', 'Filiação à SEG Paraná (se obrigatório)', 'Configuração de NF-e completa', 'Pasta Drive criada e compartilhada', 'Cliente recebeu instruções', 'EMPRESA PRONTA PARA CONTABILIDADE MENSAL'] }
         ];
-
         function inicializarFirebase() {
             try {
                 app = firebase.initializeApp(firebaseConfig);
@@ -141,7 +109,6 @@
                 carregarLocal();
             }
         }
-
         function sincronizarDados() {
             if (firebaseConectado && db) {
                 db.ref('clientes').on('value', snapshot => {
@@ -155,16 +122,14 @@
                 });
             }
         }
-
         function salvarDados() {
             localStorage.setItem('clientes', JSON.stringify(clientes));
             if (firebaseConectado && db) {
-                db.ref('clientes').set(clientes).catch(err => console.log('Erro ao salvar:', err));
+                db.ref('clientes').set(clientes).catch(err => console.log('Erro:', err));
             }
             renderizarClientes();
             if (clienteAtivo) renderizarDetalhes(clienteAtivo);
         }
-
         function carregarLocal() {
             const local = localStorage.getItem('clientes');
             if (local) {
@@ -172,24 +137,18 @@
                 catch (e) { clientes = []; }
             }
         }
-
         function atualizarStatus(msg) {
             const status = document.getElementById('statusMsg');
             if (status) status.textContent = msg;
         }
-
         function adicionarCliente() {
             const nome = document.getElementById('nomeCliente').value.trim();
             const telefone = document.getElementById('telefoneCliente').value.trim();
             const email = document.getElementById('emailCliente').value.trim();
             if (!nome) { alert('Digite o nome do cliente'); return; }
             const cliente = {
-                id: Date.now(),
-                nome, telefone, email,
-                blocos: BLOCOS.map(bloco => ({
-                    id: bloco.id,
-                    etapas: bloco.etapas.map(etapa => ({texto: etapa, completo: false, data: null}))
-                })),
+                id: Date.now(), nome, telefone, email,
+                blocos: BLOCOS.map(bloco => ({ id: bloco.id, etapas: bloco.etapas.map(etapa => ({texto: etapa, completo: false, data: null})) })),
                 dataCriacao: new Date().toLocaleDateString('pt-BR')
             };
             clientes.push(cliente);
@@ -200,13 +159,7 @@
             clienteAtivo = cliente.id;
             renderizarDetalhes(cliente.id);
         }
-
-        function selecionarCliente(clienteId) {
-            clienteAtivo = clienteId;
-            renderizarClientes();
-            renderizarDetalhes(clienteId);
-        }
-
+        function selecionarCliente(clienteId) { clienteAtivo = clienteId; renderizarClientes(); renderizarDetalhes(clienteId); }
         function deletarCliente(clienteId) {
             if (confirm('Tem certeza que deseja deletar este cliente?')) {
                 clientes = clientes.filter(c => c.id !== clienteId);
@@ -214,7 +167,6 @@
                 salvarDados();
             }
         }
-
         function marcarEtapa(clienteId, blocoId, etapaIdx) {
             const cliente = clientes.find(c => c.id === clienteId);
             if (!cliente || !cliente.blocos) return;
@@ -226,7 +178,6 @@
             etapa.data = etapa.completo ? new Date().toLocaleDateString('pt-BR') : null;
             salvarDados();
         }
-
         function marcarBlocoInteiro(clienteId, blocoId) {
             const cliente = clientes.find(c => c.id === clienteId);
             if (!cliente || !cliente.blocos) return;
@@ -240,7 +191,6 @@
             });
             salvarDados();
         }
-
         function renderizarClientes() {
             const lista = document.getElementById('clientesList');
             if (!clientes || clientes.length === 0) {
@@ -252,38 +202,19 @@
                 const totalEtapas = cliente.blocos.reduce((acc, b) => acc + (b.etapas ? b.etapas.length : 0), 0);
                 const etapasCompletas = cliente.blocos.reduce((acc, b) => acc + (b.etapas ? b.etapas.filter(e => e.completo).length : 0), 0);
                 const percentual = totalEtapas > 0 ? Math.round((etapasCompletas / totalEtapas) * 100) : 0;
-                return `
-                    <div class="cliente-item ${clienteAtivo === cliente.id ? 'active' : ''}" onclick="selecionarCliente(${cliente.id})">
-                        <div class="cliente-nome">${cliente.nome}</div>
-                        <div class="cliente-progresso">${etapasCompletas}/${totalEtapas} etapas (${percentual}%)</div>
-                    </div>
-                `;
+                return `<div class="cliente-item ${clienteAtivo === cliente.id ? 'active' : ''}" onclick="selecionarCliente(${cliente.id})"><div class="cliente-nome">${cliente.nome}</div><div class="cliente-progresso">${etapasCompletas}/${totalEtapas} etapas (${percentual}%)</div></div>`;
             }).join('');
         }
-
         function renderizarDetalhes(clienteId) {
             const cliente = clientes.find(c => c.id === clienteId);
             const detalhes = document.getElementById('detalhes');
-            if (!cliente) {
-                detalhes.innerHTML = '<div class="empty-state"><p>Selecione um cliente</p></div>';
-                return;
-            }
+            if (!cliente) { detalhes.innerHTML = '<div class="empty-state"><p>Selecione um cliente</p></div>'; return; }
             if (!cliente.blocos) {
-                cliente.blocos = BLOCOS.map(bloco => ({
-                    id: bloco.id,
-                    etapas: bloco.etapas.map(etapa => ({texto: etapa, completo: false, data: null}))
-                }));
+                cliente.blocos = BLOCOS.map(bloco => ({ id: bloco.id, etapas: bloco.etapas.map(etapa => ({texto: etapa, completo: false, data: null})) }));
             }
             detalhes.innerHTML = `
                 <div class="cliente-header">
-                    <div>
-                        <h2>${cliente.nome}</h2>
-                        <div class="cliente-info">
-                            ${cliente.telefone ? `📱 ${cliente.telefone}<br>` : ''}
-                            ${cliente.email ? `📧 ${cliente.email}<br>` : ''}
-                            📅 ${cliente.dataCriacao}
-                        </div>
-                    </div>
+                    <div><h2>${cliente.nome}</h2><div class="cliente-info">${cliente.telefone ? `📱 ${cliente.telefone}<br>` : ''}${cliente.email ? `📧 ${cliente.email}<br>` : ''}📅 ${cliente.dataCriacao}</div></div>
                     <button class="btn-delete" onclick="deletarCliente(${cliente.id})">🗑️ Deletar</button>
                 </div>
                 <div class="blocos-container">
@@ -295,33 +226,26 @@
                         return `
                             <div class="bloco bloco-${bloco.id}">
                                 <div class="bloco-header">
-                                    <input type="checkbox" class="bloco-checkbox" 
-                                        ${etapasCompletas === totalEtapas ? 'checked' : ''} 
-                                        onchange="marcarBlocoInteiro(${cliente.id}, ${bloco.id})">
+                                    <input type="checkbox" class="bloco-checkbox" ${etapasCompletas === totalEtapas ? 'checked' : ''} onchange="marcarBlocoInteiro(${cliente.id}, ${bloco.id})">
                                     <div class="bloco-title">${blocoInfo.nome}</div>
                                     <div class="bloco-progress">${etapasCompletas}/${totalEtapas}</div>
                                 </div>
                                 <div class="sub-etapas">
                                     ${bloco.etapas.map((etapa, i) => `
                                         <div class="sub-etapa">
-                                            <input type="checkbox" id="etapa_${bloco.id}_${i}" 
-                                                ${etapa.completo ? 'checked' : ''}
-                                                onchange="marcarEtapa(${cliente.id}, ${bloco.id}, ${i})">
+                                            <input type="checkbox" id="etapa_${bloco.id}_${i}" ${etapa.completo ? 'checked' : ''} onchange="marcarEtapa(${cliente.id}, ${bloco.id}, ${i})">
                                             <label for="etapa_${bloco.id}_${i}">${etapa.texto}</label>
                                             ${etapa.data ? `<div class="sub-etapa-data">✓ ${etapa.data}</div>` : ''}
                                         </div>
                                     `).join('')}
                                 </div>
-                                <div class="bloco-status">
-                                    ${etapasCompletas === totalEtapas ? '✅ Bloco Completo' : `${etapasCompletas} de ${totalEtapas} etapas`}
-                                </div>
+                                <div class="bloco-status">${etapasCompletas === totalEtapas ? '✅ Bloco Completo' : `${etapasCompletas} de ${totalEtapas} etapas`}</div>
                             </div>
                         `;
                     }).join('')}
                 </div>
             `;
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             carregarLocal();
             inicializarFirebase();
